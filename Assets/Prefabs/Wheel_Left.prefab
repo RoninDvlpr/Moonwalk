@@ -44,7 +44,7 @@ WheelCollider:
   m_Center: {x: 0, y: 0, z: 0}
   m_Radius: 0.392
   m_SuspensionSpring:
-    spring: 20000
+    spring: 45000
     damper: 1000
     targetPosition: 0
   m_SuspensionDistance: 0.03
@@ -94,15 +94,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5128126135657195069, guid: 19715278cf387814cb6d41001aa0777b, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.09950002
+      value: 0.0995
       objectReference: {fileID: 0}
     - target: {fileID: 5128126135657195069, guid: 19715278cf387814cb6d41001aa0777b, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.14799999
+      value: -0.03
       objectReference: {fileID: 0}
     - target: {fileID: 5128126135657195069, guid: 19715278cf387814cb6d41001aa0777b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.002500015
+      value: 0.0025
       objectReference: {fileID: 0}
     - target: {fileID: 5128126135657195069, guid: 19715278cf387814cb6d41001aa0777b, type: 3}
       propertyPath: m_LocalRotation.w
