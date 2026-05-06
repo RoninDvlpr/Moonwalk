@@ -6,6 +6,7 @@ public interface IPhysicsStep
 {
     /// <summary>
     /// Notify this object about the next physics step.
+    /// Intended to be called in FixedUpdate().
     /// </summary>
-    public void OnFixedUpdate();
+    public void PerformPhysicsStep();
 }

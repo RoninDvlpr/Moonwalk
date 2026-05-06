@@ -834,6 +834,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7872382438261461978, guid: 9ef8496100ab4b14b85cc6bbc79f249a, type: 3}
   m_PrefabInstance: {fileID: 1075560782}
   m_PrefabAsset: {fileID: 0}
+--- !u!146 &1075560784 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 5291368521312064243, guid: 9ef8496100ab4b14b85cc6bbc79f249a, type: 3}
+  m_PrefabInstance: {fileID: 1075560782}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1087657486
 GameObject:
   m_ObjectHideFlags: 0
@@ -957,6 +962,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2095839708715182425, guid: 36f4b65598d70b94f94a0662a50eceb6, type: 3}
   m_PrefabInstance: {fileID: 1287955345}
   m_PrefabAsset: {fileID: 0}
+--- !u!146 &1287955347 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 4123905968184764528, guid: 36f4b65598d70b94f94a0662a50eceb6, type: 3}
+  m_PrefabInstance: {fileID: 1287955345}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1369400354
 GameObject:
   m_ObjectHideFlags: 0
@@ -1054,6 +1064,11 @@ PrefabInstance:
 --- !u!4 &1508892177 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2095839708715182425, guid: 36f4b65598d70b94f94a0662a50eceb6, type: 3}
+  m_PrefabInstance: {fileID: 1508892176}
+  m_PrefabAsset: {fileID: 0}
+--- !u!146 &1508892178 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 4123905968184764528, guid: 36f4b65598d70b94f94a0662a50eceb6, type: 3}
   m_PrefabInstance: {fileID: 1508892176}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1712824485
@@ -1154,6 +1169,11 @@ PrefabInstance:
 --- !u!4 &1747553344 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7872382438261461978, guid: 9ef8496100ab4b14b85cc6bbc79f249a, type: 3}
+  m_PrefabInstance: {fileID: 1747553343}
+  m_PrefabAsset: {fileID: 0}
+--- !u!146 &1747553345 stripped
+WheelCollider:
+  m_CorrespondingSourceObject: {fileID: 5291368521312064243, guid: 9ef8496100ab4b14b85cc6bbc79f249a, type: 3}
   m_PrefabInstance: {fileID: 1747553343}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1755878978
@@ -1372,6 +1392,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90ade09f2127f31479dcc8133b345db5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  driveAssemblies:
+  - assemblyName: Left Front Wheel
+    motorSpecsAsset: {fileID: 11400000, guid: e46ab7dbbe1219641b09744edeae5218, type: 2}
+    wheels:
+    - {fileID: 1287955347}
+  - assemblyName: Right Front Wheel
+    motorSpecsAsset: {fileID: 11400000, guid: e46ab7dbbe1219641b09744edeae5218, type: 2}
+    wheels:
+    - {fileID: 1075560784}
+  - assemblyName: Left Back Wheel
+    motorSpecsAsset: {fileID: 11400000, guid: e46ab7dbbe1219641b09744edeae5218, type: 2}
+    wheels:
+    - {fileID: 1508892178}
+  - assemblyName: Right Back Wheel
+    motorSpecsAsset: {fileID: 11400000, guid: e46ab7dbbe1219641b09744edeae5218, type: 2}
+    wheels:
+    - {fileID: 1747553345}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

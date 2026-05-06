@@ -5,26 +5,20 @@ using UnityEngine;
 public class ReceiverModule : IPhysicsStep
 {
     ISignalSource signalSource;
-    DriveController roverDriveController;
+    Vector2 signalBuffer;
 
-    public ReceiverModule(ISignalSource signalSource, DriveController roverDriveController)
+    public ReceiverModule(ISignalSource signalSource)
     {
         this.signalSource = signalSource;
-        this.roverDriveController = roverDriveController;
     }
 
-    public void OnFixedUpdate()
+    public void PerformPhysicsStep()
     {
         /// If necessary, a lower receiver sampling rate can be simulated by skipping a number of frames
-        PushInputToDriveController();
+        SampleSignal();
     }
 
-    /// <summary>
-    /// Samples the signal and pushes the received command to the Drive Controller.
-    /// </summary>
-    void PushInputToDriveController()
-    {
-        Vector2 signalSample = signalSource.GetCurrentSignal();
-        roverDriveController.SetInputCommand(signalSample);
-    }
+    void SampleSignal() => signalBuffer = signalSource.GetCurrentSignal();
+
+    public Vector2 GetCurrentInput() => signalBuffer;
 }

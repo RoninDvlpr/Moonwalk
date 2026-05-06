@@ -4,19 +4,15 @@ using UnityEngine;
 
 public class MotorController : IPhysicsStep
 {
-    // Start is called before the first frame update
-    void Start()
+    public MotorSpecs MotorSpecs { get; private set; }
+
+    public MotorController(MotorSpecs specs)
     {
-        
+        MotorSpecs = specs;
     }
 
-    public void OnFixedUpdate()
+    public void PerformPhysicsStep()
     {
         // 
-    }
-
-    public void UpdateTargetVelocity()
-    {
-        
     }
 }
