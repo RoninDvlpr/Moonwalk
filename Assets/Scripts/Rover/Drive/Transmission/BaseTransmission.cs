@@ -38,8 +38,16 @@ public abstract class BaseTransmission
     /// <param name="roverCenterOfRotation">The point the rover is supposed to rotate around during turns.</param>
     public void AssignWheels(List<WheelCollider> newWheelsList, Transform roverCenterOfRotation)
     {
-        wheels = newWheelsList;
-        this.roverCenterOfRotation = roverCenterOfRotation;
+        if (newWheelsList == null)
+            Debug.LogWarning("Can't assign transmission's wheels list: the provided wheels list is null.");
+        else
+            wheels = newWheelsList;
+
+        if (roverCenterOfRotation == null)
+            Debug.LogWarning("Can't assign transmission's center of rotation: the provided Transform is null.");
+        else
+            this.roverCenterOfRotation = roverCenterOfRotation;
+
         CacheEffectiveValues();
     }
 

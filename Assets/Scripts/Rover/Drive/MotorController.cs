@@ -4,11 +4,13 @@ using UnityEngine;
 
 public class MotorController : IPhysicsStep
 {
-    public MotorSpecs MotorSpecs { get; private set; }
+    public MotorConfig MotorConfig { get; private set; }
 
-    public MotorController(MotorSpecs specs)
+    public MotorController(MotorConfig config)
     {
-        MotorSpecs = specs;
+        if (config == null)
+            Debug.LogError("The provided motor config is null!");
+        MotorConfig = config;
     }
 
     public void PerformPhysicsStep()

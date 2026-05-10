@@ -7,15 +7,18 @@ using UnityEngine;
 /// </summary>
 public class RoverController : MonoBehaviour
 {
-    #region Modules
-    [SerializeField] List<DriveAssembly> driveAssemblies;
-    VehicleControlUnit VCU;
-    ReceiverModule receiverModule;
+    #region Config
+    RoverConfig roverConfig;
+    [Tooltip("A point the rover rotates around during turns")]
+    [SerializeField] Transform roverCenterOfRotation;
+    [SerializeField] List<DriveAssemblyConfig> driveAssemblyConfigs;
+    [SerializeField] bool enableDebugMode;
     #endregion
 
-    #region State
-    RoverSpecs roverSpecs;
-    [SerializeField] bool enableDebugMode;
+    #region Modules
+    ReceiverModule receiverModule;
+    VehicleControlUnit VCU;
+    [SerializeField] List<DriveAssembly> driveAssemblies;
     #endregion
 
 
@@ -24,40 +27,31 @@ public class RoverController : MonoBehaviour
 
     void Start()
     {
-        GenerateRoverSpecs();
-        InitializeModules(roverSpecs);
+        if (roverCenterOfRotation == null)
+            roverCenterOfRotation = transform;
+        GenerateRoverConfig();
+        InitializeModules(roverConfig, roverCenterOfRotation);
     }
 
-    void GenerateRoverSpecs()
+    void GenerateRoverConfig()
     {
-        List<DriveAssemblySpecs> assemblySpecs = new List<DriveAssemblySpecs>();
-        foreach (DriveAssembly assembly in driveAssemblies)
-            assemblySpecs.Add(assembly.GenerateAssemblySpecs());
-
-        roverSpecs = new RoverSpecs(assemblySpecs);
+        roverConfig = new RoverConfig(driveAssemblyConfigs);
+        // Loading of serialized config overrides should happen here
     }
 
     /// <summary>
     /// Implements and encapsulates the Rover's custom DI.
     /// </summary>
-    void InitializeModules(RoverSpecs specs)
+    void InitializeModules(RoverConfig config, Transform roverCenterOfRotation)
     {
         ISignalSource signalSource = new InputSystemSignalSource();
         receiverModule = new ReceiverModule(signalSource);
 
-        foreach (DriveAssembly assembly in driveAssemblies)
-            assembly.Initialize(transform);
+        foreach (DriveAssemblyConfig assemblyConfig in config.DriveAssemblyConfigs)
+            driveAssemblies.Add(new DriveAssembly(assemblyConfig, roverCenterOfRotation));
 
-        VCU = new VehicleControlUnit(receiverModule, driveAssemblies, specs);
+        VCU = new VehicleControlUnit(receiverModule, driveAssemblies, config);
     }
-
-    //void InitializeMotors()
-    //{
-    //    motors = new List<MotorController>();
-    //    foreach (WheelGroup group in wheelGroups)
-    //        foreach (WheelCollider collider in group.wheels)
-    //            motors.Add(new MotorController(collider, group.motorSpecsAsset.GenerateMotorSpecsInstance()));
-    //}
 
     #endregion
 
@@ -82,33 +76,33 @@ public class RoverController : MonoBehaviour
 
     private void OnValidate()
     {
-        ValidateDriveAssemblyNames();
+        ValidateDriveAssemblyConfigNames();
     }
 
     /// <summary>
     /// Check each assembly name to ensure all names are unique and non-empty.
     /// The assemblies that were added last (stored at a higher index) are validated first.
     /// </summary>
-    void ValidateDriveAssemblyNames()
+    void ValidateDriveAssemblyConfigNames()
     {
-        if (driveAssemblies == null || driveAssemblies.Count == 0)
+        if (driveAssemblyConfigs == null || driveAssemblyConfigs.Count == 0)
             return;
 
-        for (int i = driveAssemblies.Count - 1; i >= 0; i--)
+        for (int i = driveAssemblyConfigs.Count - 1; i >= 0; i--)
             ValidateAssemblyName(i);
     }
 
     void ValidateAssemblyName(int validatedAssemblyIndex)
     {
-        driveAssemblies[validatedAssemblyIndex].EnsureNameNotEmpty();
+        driveAssemblyConfigs[validatedAssemblyIndex].EnsureNameNotEmpty();
         EnsureNameUniqueness(validatedAssemblyIndex);
     }
 
     int CountMatchingAssemblyNames(int validatedAssemblyIndex)
     {
         int matchingAssemblyNamesFound = 0;
-        for (int j = 0; j < driveAssemblies.Count; j++)
-            if (j != validatedAssemblyIndex && driveAssemblies[j].AssemblyName == driveAssemblies[validatedAssemblyIndex].AssemblyName)
+        for (int j = 0; j < driveAssemblyConfigs.Count; j++)
+            if (j != validatedAssemblyIndex && driveAssemblyConfigs[j].AssemblyName == driveAssemblyConfigs[validatedAssemblyIndex].AssemblyName)
                 matchingAssemblyNamesFound++;
         return matchingAssemblyNamesFound;
     }
@@ -123,13 +117,13 @@ public class RoverController : MonoBehaviour
         {
             if (cyclesPerformed > cyclesSafetyCap)
             {
-                Debug.LogError($"Drive assembly names validation loop seems to be stuck. Breaking the loop after performing {cyclesSafetyCap} iterations.");
+                Debug.LogError($"Drive assembly config names validation loop seems to be stuck. Breaking the loop after performing {cyclesSafetyCap} iterations.");
                 break;
             }
 
             matchingAssemblyNamesFound = CountMatchingAssemblyNames(validatedAssemblyIndex); //perform additional check to ensure the uniqueness of the new name
             if (matchingAssemblyNamesFound > 0)
-                driveAssemblies[validatedAssemblyIndex].ResolveNameCollision(matchingAssemblyNamesFound);
+                driveAssemblyConfigs[validatedAssemblyIndex].ResolveNameCollision(matchingAssemblyNamesFound);
             cyclesPerformed++;
         }
     }

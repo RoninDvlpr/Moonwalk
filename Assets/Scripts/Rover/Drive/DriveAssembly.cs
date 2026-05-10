@@ -8,15 +8,18 @@ using UnityEngine;
 /// </summary>
 [Serializable] public class DriveAssembly : IPhysicsStep
 {
-    #region Config
-    [Tooltip("Used as an ID during serialization, therefore should be unique in the scope of the particular Rover Controller")]
-    [SerializeField] string assemblyName;
-    public string AssemblyName { get { return assemblyName; } }
-    [SerializeField] MotorSpecsAsset motorSpecsAsset;
-    #endregion
+    public string AssemblyName { get; private set; }
+    DriveAssemblyConfig AssemblyConfig { get; set; }
+    List<WheelCollider> Wheels
+    {
+        get
+        {
+            return AssemblyConfig.Wheels;
+        }
+    }
 
     #region Modules
-    [SerializeField] List<WheelCollider> wheels;
+    List<WheelCollider> wheels;
     MotorController motorController;
     BaseTransmission transmission;
     #endregion
@@ -27,17 +30,45 @@ using UnityEngine;
 
 
 
-    public void Initialize(Transform roverCenterOfRotation)
-    {
-        if (motorSpecsAsset == null)
-        {
-            Debug.LogWarning($"Can't initialize the drive assembly: {assemblyName}. Motor Specs Assets isn't assigned!");
-            return;
-        }
+    #region Initialization
 
-        motorController = new MotorController(motorSpecsAsset.GenerateMotorSpecsInstance());
+    public DriveAssembly(DriveAssemblyConfig assemblyConfig, Transform roverCenterOfRotation)
+    {
+        if (assemblyConfig == null)
+            Debug.LogError($"The drive assembly \"{assemblyConfig.AssemblyName}\" isn't properly initalized: the Assembly Config is null!");
+        else
+            CheckConfigValidity(assemblyConfig);
+        
+        AssemblyConfig = assemblyConfig;
+        InitializeModules(AssemblyConfig, roverCenterOfRotation);
+    }
+
+    void InitializeModules(DriveAssemblyConfig assemblyConfig, Transform roverCenterOfRotation)
+    {
+        motorController = new MotorController(assemblyConfig.MotorConfig);
         transmission = new LockedTransmission(wheels, roverCenterOfRotation);
     }
+
+    bool CheckConfigValidity(DriveAssemblyConfig configToValidate)
+    {
+        bool configIsValid = true;
+
+        if (configToValidate.MotorConfig == null)
+        {
+            Debug.LogWarning($"The drive assembly \"{configToValidate.AssemblyName}\" may not be initialized properly: the motor config is null!");
+            configIsValid = false;
+        }
+
+        if (configToValidate.Wheels == null)
+        {
+            Debug.LogWarning($"The drive assembly \"{configToValidate.AssemblyName}\" may not be initialized properly: the Wheels list is null!");
+            configIsValid = false;
+        }
+
+        return configIsValid;
+    }
+
+    #endregion
 
 
     public void UpdateMovemenCommand(MovementCommand roverMovementCommand)
@@ -51,36 +82,4 @@ using UnityEngine;
         // Calculate target motor RPM
         // Push target RPM to the motor
     }
-
-
-    #region Name Validation
-
-    public void EnsureNameNotEmpty()
-    {
-        if (string.IsNullOrWhiteSpace(AssemblyName))
-            SetNameToDefault();
-    }
-
-    public void SetNameToDefault()
-    {
-        assemblyName = motorSpecsAsset ? $"{motorSpecsAsset.name} Assembly" : "New Drive Assembly";
-    }
-
-    public void ResolveNameCollision(int numOfMatchingNames)
-    {
-        //optionally, a name incrementation can be implemented for cases when there's (i) on the name's end already
-        assemblyName = $"{assemblyName} ({numOfMatchingNames})";
-    }
-
-    #endregion
-
-
-    #region Specs
-
-    public DriveAssemblySpecs GenerateAssemblySpecs()
-    {
-        return new DriveAssemblySpecs(assemblyName, motorController.MotorSpecs);
-    }
-
-    #endregion
 }

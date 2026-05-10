@@ -2,14 +2,14 @@ using System;
 using System.Collections.Generic;
 
 
-[Serializable] public class MotorSpecs
+[Serializable] public class MotorConfig
 {
     public float maxRPM;
     public float maxTorque;
 
-    public MotorSpecs() { }
+    public MotorConfig() { }
 
-    public MotorSpecs(float maxMotorRPM, float maxMotorTorque)
+    public MotorConfig(float maxMotorRPM, float maxMotorTorque)
     {
         maxRPM = maxMotorRPM;
         maxTorque = maxMotorTorque;

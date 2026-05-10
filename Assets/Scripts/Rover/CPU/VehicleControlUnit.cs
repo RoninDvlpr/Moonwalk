@@ -14,17 +14,17 @@ public class VehicleControlUnit : IPhysicsStep
     #endregion
 
     #region State
-    RoverSpecs roverSpecs;
+    RoverConfig roverConfig;
     public bool DebugModeEnabled { get; set; }
     #endregion
 
 
 
-    public VehicleControlUnit(ReceiverModule receiver, List<DriveAssembly> driveAssemblies, RoverSpecs roverSpecs)
+    public VehicleControlUnit(ReceiverModule receiver, List<DriveAssembly> driveAssemblies, RoverConfig roverConfig)
     {
         this.receiver = receiver;
         this.driveAssemblies = driveAssemblies;
-        this.roverSpecs = roverSpecs;
+        this.roverConfig = roverConfig;
     }
 
     public void PerformPhysicsStep()

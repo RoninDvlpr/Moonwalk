@@ -10,12 +10,19 @@ public class LockedTransmission : BaseTransmission
 {
     public LockedTransmission(List<WheelCollider> wheels, Transform roverCenterOfRotation) : base(wheels, roverCenterOfRotation) { }
 
+    /// <summary>
+    /// If the provided rover center of rotation is null, the method considers the center of rotation to be at Vector3.zero.
+    /// </summary>
+    /// <param name="wheels">The transmission's wheels</param>
+    /// <param name="roverCenterOfRotation">The pivot that the rover rotates around when turning</param>
+    /// <returns>Effective X offset value for use in kinematics calculation</returns>
     protected override float CalculateEffectiveOffset(List<WheelCollider> wheels, Transform roverCenterOfRotation)
     {
+        Vector3 pointOfRotation = roverCenterOfRotation?.position ?? Vector3.zero;
         float xOffsetSum = 0f;
         foreach (WheelCollider wheel in wheels)
         {
-            Vector3 worldPositionDelta = wheel.transform.position - roverCenterOfRotation.transform.position;
+            Vector3 worldPositionDelta = wheel.transform.position - pointOfRotation;
             float deltaProjectedOnXAxis = Vector3.Dot(worldPositionDelta, wheel.transform.right);
             xOffsetSum += deltaProjectedOnXAxis;
         }
