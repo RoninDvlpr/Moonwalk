@@ -10,16 +10,9 @@ using UnityEngine;
 {
     public string AssemblyName { get; private set; }
     DriveAssemblyConfig AssemblyConfig { get; set; }
-    List<WheelCollider> Wheels
-    {
-        get
-        {
-            return AssemblyConfig.Wheels;
-        }
-    }
+    IReadOnlyCollection<WheelCollider> Wheels => AssemblyConfig.Wheels;
 
     #region Modules
-    List<WheelCollider> wheels;
     MotorController motorController;
     BaseTransmission transmission;
     #endregion
@@ -46,7 +39,7 @@ using UnityEngine;
     void InitializeModules(DriveAssemblyConfig assemblyConfig, Transform roverCenterOfRotation)
     {
         motorController = new MotorController(assemblyConfig.MotorConfig);
-        transmission = new LockedTransmission(wheels, roverCenterOfRotation);
+        transmission = new LockedTransmission(Wheels, roverCenterOfRotation);
     }
 
     bool CheckConfigValidity(DriveAssemblyConfig configToValidate)

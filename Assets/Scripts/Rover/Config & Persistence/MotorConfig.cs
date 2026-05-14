@@ -1,11 +1,32 @@
 using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 
-[Serializable] public class MotorConfig
+[Serializable] public class MotorConfig : ObservableConfig
 {
-    public float maxRPM;
-    public float maxTorque;
+    [SerializeField] float maxRPM;
+    public float MaxRPM
+    {
+        get => maxRPM;
+        set
+        {
+            maxRPM = value;
+            NotifyAboutChanges();
+        }
+    }
+    [SerializeField] float maxTorque;
+    public float MaxTorque
+    {
+        get => maxTorque;
+        set
+        {
+            maxTorque = value;
+            NotifyAboutChanges();
+        }
+    }
+
+
 
     public MotorConfig() { }
 

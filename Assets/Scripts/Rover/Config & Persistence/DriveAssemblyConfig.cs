@@ -11,21 +11,11 @@ using UnityEngine;
 {
     [Tooltip("Used as an ID during serialization, therefore should be unique in the scope of the particular Rover Controller")]
     [SerializeField] string assemblyName;
-    public string AssemblyName
-    {
-        get
-        {
-            return assemblyName;
-        }
-    }
+    public string AssemblyName => assemblyName;
+
     [SerializeField] List<WheelCollider> wheels;
-    public List<WheelCollider> Wheels
-    {
-        get
-        {
-            return wheels;
-        }
-    }
+    public IReadOnlyCollection<WheelCollider> Wheels => wheels.AsReadOnly();
+
     [SerializeField] MotorConfigPreset motorDefaultConfig;
     MotorConfig currentMotorConfig;
     /// <summary>
@@ -40,27 +30,20 @@ using UnityEngine;
             return currentMotorConfig;
         }
     }
-    bool HasMotorConfig
-    {
-        get
-        {
-            return currentMotorConfig != null;
-        }
-    }
+    bool HasMotorConfig => currentMotorConfig != null;
 
 
 
     /// <summary>
-    /// Applies a user motor config overrides on top of the default motor config template.
-    /// Used to load a serialized user motor settings.
+    /// Initializes the assembly config using the provided motor config as overrides on top of the current motor config
+    /// (if the assembly hasn't been initialized yet, the current motor config will be generated from the default motor config template).
     /// </summary>
-    /// <param name="motorConfigOverrides">A motor config set by user that supposed to override the default motor config template</param>
+    /// <param name="motorConfigOverrides">A motor config used to override the default motor config template</param>
     public void Initialize(MotorConfig motorConfigOverrides)
     {
+        Initialize();
         if (motorConfigOverrides != null)
-            currentMotorConfig = motorConfigOverrides;
-        else
-            Initialize();
+            currentMotorConfig.CopyObjectFields(motorConfigOverrides);
     }
 
     /// <summary>
@@ -76,7 +59,8 @@ using UnityEngine;
     }
 
     /// <summary>
-    /// Resets the current motor configuration, creating a new instance based on the default configuration preset.
+    /// Resets the current motor configuration instance to defaults while preserving it's current event invocation list (subscribtions).
+    /// If there's no motor config instance currently, a new instance is created based on the default configuration preset.
     /// Used both for initialization from defaults and for reset to defaults.
     /// </summary>
     public void SetMotorConfigFromDefaultPreset()
@@ -84,7 +68,11 @@ using UnityEngine;
         if (motorDefaultConfig == null)
             Debug.LogError($"Drive assembly \"{AssemblyName}\" can't set a motor config from the default preset: the preset isn't assigned.");
         else
-            currentMotorConfig = motorDefaultConfig.GenerateMotorConfigInstance();
+        {
+            MotorConfig defaultConfig = motorDefaultConfig.GenerateMotorConfigInstance();
+            if (currentMotorConfig?.CopyObjectFields(defaultConfig) == null)
+                currentMotorConfig = defaultConfig;
+        }
     }
 
 

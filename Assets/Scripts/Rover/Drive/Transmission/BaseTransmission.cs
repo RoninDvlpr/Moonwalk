@@ -8,7 +8,7 @@ using UnityEngine;
 /// </summary>
 public abstract class BaseTransmission
 {
-    protected List<WheelCollider> wheels;
+    protected IReadOnlyCollection<WheelCollider> wheels;
     /// <summary>
     /// The effective X offset is calculated relative to this transform, taking into account its local X direction.
     /// For more precise calculations of complex drive assemblies the assebly mounting point may also be taken into consideration
@@ -26,7 +26,7 @@ public abstract class BaseTransmission
     public float EffectiveRadius { get; private set; }
 
 
-    public BaseTransmission(List<WheelCollider> wheels, Transform roverCenterOfRotation)
+    public BaseTransmission(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation)
     {
         AssignWheels(wheels, roverCenterOfRotation);
     }
@@ -36,7 +36,7 @@ public abstract class BaseTransmission
     /// </summary>
     /// <param name="newWheelsList">A set of wheels the transmission is responsible for.</param>
     /// <param name="roverCenterOfRotation">The point the rover is supposed to rotate around during turns.</param>
-    public void AssignWheels(List<WheelCollider> newWheelsList, Transform roverCenterOfRotation)
+    public void AssignWheels(IReadOnlyCollection<WheelCollider> newWheelsList, Transform roverCenterOfRotation)
     {
         if (newWheelsList == null)
             Debug.LogWarning("Can't assign transmission's wheels list: the provided wheels list is null.");
@@ -61,7 +61,7 @@ public abstract class BaseTransmission
         EffectiveRadius = CalculateEffectiveRadius(wheels);
     }
 
-    protected abstract float CalculateEffectiveOffset(List<WheelCollider> wheels, Transform roverCenterOfRotation);
-    protected abstract float CalculateEffectiveRadius(List<WheelCollider> wheels);
+    protected abstract float CalculateEffectiveOffset(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation);
+    protected abstract float CalculateEffectiveRadius(IReadOnlyCollection<WheelCollider> wheels);
     public abstract void DistributeTorque(float torque);
 }
