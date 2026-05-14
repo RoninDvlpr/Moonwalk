@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-[Serializable] public class RoverConfig
+[Serializable] public class RoverConfig : ISerializationCallbackReceiver
 {
     [SerializeField] List<DriveAssemblyConfig> driveAssemblyConfigs;
     public IReadOnlyCollection<DriveAssemblyConfig> DriveAssemblyConfigs => driveAssemblyConfigs.AsReadOnly();
@@ -16,21 +16,31 @@ using UnityEngine;
 
     #region Events Subscription
 
-    #region Max RPM
-
-    public void SubscribeToMotorMaxRPMChangedEvents(Action maxRPMChangedHandler)
+    public void SubscribeToMotorUpdate(Action motorConfigUpdateHandler)
     {
         foreach (DriveAssemblyConfig assemblyConfig in driveAssemblyConfigs)
-            assemblyConfig.MotorConfig.MaxRPMChanged += maxRPMChangedHandler;
+            assemblyConfig.MotorConfig.OnConfigUpdated += motorConfigUpdateHandler;
     }
 
-    public void UnsubscribeToMotorMaxRPMChangedEvents(Action maxRPMChangedHandler)
+    public void UnsubscribeFromMotorUpdate(Action motorConfigUpdateHandler)
     {
         foreach (DriveAssemblyConfig assemblyConfig in driveAssemblyConfigs)
-            assemblyConfig.MotorConfig.MaxRPMChanged -= maxRPMChangedHandler;
+            assemblyConfig.MotorConfig.OnConfigUpdated -= motorConfigUpdateHandler;
     }
 
     #endregion
+
+    #region Serialization
+
+    public void OnBeforeSerialize()
+    {
+
+    }
+
+    public void OnAfterDeserialize()
+    {
+
+    }
 
     #endregion
 }

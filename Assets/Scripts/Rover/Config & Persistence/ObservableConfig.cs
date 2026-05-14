@@ -26,11 +26,11 @@ using UnityEngine;
     public virtual void OnBeforeSerialize() { }
 
     /// <summary>
-    /// Applies serialized JSON overrides without breaking event links.
-    /// Gracefully handles deserialization of older config versions by applying overrides only to the matching fields.
+    /// Applies serialized JSON overwrites without breaking event subscriptions.
+    /// Gracefully handles deserialization of older config versions by applying overwrites only to the matching fields.
     /// </summary>
-    /// <param name="json">The JSON string holding overrides</param>
-    public void ApplyJSONOverrides(string json) => JsonUtility.FromJsonOverwrite(json, this);
+    /// <param name="json">The JSON string holding serialized overwrite data</param>
+    public void ApplyJsonOverwrites(string json) => JsonUtility.FromJsonOverwrite(json, this);
 
     /// <summary>
     /// Copies all the applicable field values from a source object to this object.
@@ -54,7 +54,7 @@ using UnityEngine;
         }
 
         string json = JsonUtility.ToJson(objectToCopyFrom);
-        ApplyJSONOverrides(json);
+        ApplyJsonOverwrites(json);
         return true;
     }
 }
