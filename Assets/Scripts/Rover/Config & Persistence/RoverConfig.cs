@@ -5,41 +5,64 @@ using UnityEngine;
 
 [Serializable] public class RoverConfig : ISerializationCallbackReceiver
 {
-    [SerializeField] List<DriveAssemblyConfig> driveAssemblyConfigs;
-    public IReadOnlyCollection<DriveAssemblyConfig> DriveAssemblyConfigs => driveAssemblyConfigs.AsReadOnly();
+    /// <summary>
+    /// Holds a reference pointing to the Rover Controller's list of assembly configs.
+    /// Will be ignored by the JsonUtility serializer (it ignores properties).
+    /// </summary>
+    public IReadOnlyCollection<DriveAssemblyConfig> DriveAssemblyConfigs { get; private set; }
+    [SerializeField] List<NamedSerializedData> serializedAssemblyConfigs;
 
 
-    public RoverConfig(List<DriveAssemblyConfig> driveAssemblyConfigs)
+    public RoverConfig(IReadOnlyCollection<DriveAssemblyConfig> driveAssemblyConfigs)
     {
-        this.driveAssemblyConfigs = driveAssemblyConfigs;
+        DriveAssemblyConfigs = driveAssemblyConfigs;
     }
 
     #region Events Subscription
 
-    public void SubscribeToMotorUpdate(Action motorConfigUpdateHandler)
+    public void SubscribeToMotorUpdates(Action motorConfigUpdateHandler)
     {
-        foreach (DriveAssemblyConfig assemblyConfig in driveAssemblyConfigs)
+        foreach (DriveAssemblyConfig assemblyConfig in DriveAssemblyConfigs)
             assemblyConfig.MotorConfig.OnConfigUpdated += motorConfigUpdateHandler;
     }
 
-    public void UnsubscribeFromMotorUpdate(Action motorConfigUpdateHandler)
+    public void UnsubscribeFromMotorUpdates(Action motorConfigUpdateHandler)
     {
-        foreach (DriveAssemblyConfig assemblyConfig in driveAssemblyConfigs)
+        foreach (DriveAssemblyConfig assemblyConfig in DriveAssemblyConfigs)
             assemblyConfig.MotorConfig.OnConfigUpdated -= motorConfigUpdateHandler;
     }
 
     #endregion
 
+
     #region Serialization
 
+    /// <summary>
+    /// Creates the auxiliary list for serialized assembly containers.
+    /// </summary>
     public void OnBeforeSerialize()
     {
-
+        serializedAssemblyConfigs = new List<NamedSerializedData>();
+        foreach (DriveAssemblyConfig config in DriveAssemblyConfigs)
+        {
+            NamedSerializedData serializedConfig = new NamedSerializedData(config.AssemblyName, config);
+            serializedAssemblyConfigs.Add(serializedConfig);
+        }
     }
 
+    /// <summary>
+    /// Appies serialized data to corresponding assembly configs with matching names.
+    /// Note: For successful loading of assembly configs, the config list should be provided prior to deserialization.
+    /// </summary>
     public void OnAfterDeserialize()
     {
+        if (serializedAssemblyConfigs == null || DriveAssemblyConfigs == null)
+            return;
 
+        foreach (NamedSerializedData data in serializedAssemblyConfigs)
+            foreach (DriveAssemblyConfig config in DriveAssemblyConfigs)
+                if (config.AssemblyName == data.Name)
+                    data.ApplyAsOverwriteTo(config);
     }
 
     #endregion

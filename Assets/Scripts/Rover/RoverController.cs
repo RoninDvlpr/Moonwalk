@@ -35,7 +35,7 @@ public class RoverController : MonoBehaviour
 
     void GenerateRoverConfig()
     {
-        roverConfig = new RoverConfig(driveAssemblyConfigs);
+        roverConfig = new RoverConfig(driveAssemblyConfigs.AsReadOnly());
         // Loading of serialized config overrides should happen here
     }
 
