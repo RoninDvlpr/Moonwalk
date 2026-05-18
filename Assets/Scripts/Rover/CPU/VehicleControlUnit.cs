@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,10 +6,11 @@ using UnityEngine;
 /// <summary>
 /// Represents a rover's CPU
 /// </summary>
-public class VehicleControlUnit : IPhysicsStep
+public class VehicleControlUnit : IPhysicsStep, IDisposable
 {
     #region Modules
     KinematicPlanner kinematicPlanner = new KinematicPlanner();
+    KinematicLimits kinematicLimits;
     ReceiverModule receiver;
     List<DriveAssembly> driveAssemblies;
     #endregion
@@ -25,6 +27,7 @@ public class VehicleControlUnit : IPhysicsStep
         this.receiver = receiver;
         this.driveAssemblies = driveAssemblies;
         this.roverConfig = roverConfig;
+        kinematicLimits = new KinematicLimits(roverConfig, mkmdfgmfdmgfd);
     }
 
     public void PerformPhysicsStep()
@@ -49,5 +52,10 @@ public class VehicleControlUnit : IPhysicsStep
         else
             foreach (DriveAssembly assembly in driveAssemblies)
                 assembly?.UpdateMovemenCommand(movementCommand);
+    }
+
+    public void Dispose()
+    {
+        kinematicLimits?.Dispose();
     }
 }

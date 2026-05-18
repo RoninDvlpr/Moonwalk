@@ -71,6 +71,11 @@ public class RoverController : MonoBehaviour
             assembly.PerformPhysicsStep();
     }
 
+    void OnDestroy()
+    {
+        VCU.Dispose();
+    }
+
 
     #region Validation
 

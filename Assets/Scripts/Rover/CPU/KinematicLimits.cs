@@ -36,7 +36,7 @@ public class KinematicLimits : IDisposable
         {
             if (recalculationRequired)
                 RecalculateCachedValues();
-            return cachedMaxLinearSpeed;
+            return cachedMaxAngularSpeed;
         }
     }
     bool recalculationRequired = true;
@@ -48,12 +48,17 @@ public class KinematicLimits : IDisposable
         this.maxLinearSpeedCalculator = maxLinearSpeedCalculator;
         this.maxAngularSpeedCalculator = maxAngularSpeedCalculator;
 
-        roverConfig.SubscribeToMotorMaxRPMChangedEvents(MarkForRecalculation);
+        roverConfig.SubscribeToMotorUpdates(MarkForRecalculation);
+        // In case of implementation of wheels configuration changes during gameplay,
+        // the cached values should also be recalculated on those changes
         RecalculateCachedValues();
     }
 
     void MarkForRecalculation() => recalculationRequired = true;
 
+    /// <summary>
+    /// Cached values should be recalculated when a configuration they are based on changes.
+    /// </summary>
     void RecalculateCachedValues()
     {
         cachedMaxLinearSpeed = maxLinearSpeedCalculator();
@@ -63,6 +68,6 @@ public class KinematicLimits : IDisposable
 
     public void Dispose()
     {
-        roverConfig.UnsubscribeToMotorMaxRPMChangedEvents(MarkForRecalculation);
+        roverConfig.UnsubscribeFromMotorUpdates(MarkForRecalculation);
     }
 }

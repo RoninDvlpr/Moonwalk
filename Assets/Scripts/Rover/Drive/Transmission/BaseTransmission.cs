@@ -11,17 +11,19 @@ public abstract class BaseTransmission
     protected IReadOnlyCollection<WheelCollider> wheels;
     /// <summary>
     /// The effective X offset is calculated relative to this transform, taking into account its local X direction.
-    /// For more precise calculations of complex drive assemblies the assebly mounting point may also be taken into consideration
+    /// For more precise calculations of complex drive assemblies, the assembly mounting point may also be taken into consideration.
     /// To accommodate this, an overload of the AssignWheels() method
     /// that accepts the additional transform parameter for the mounting point may be introduced.
     /// </summary>
     Transform roverCenterOfRotation;
     /// <summary>
     /// The X offset of an abstract virtual wheel that represents all the transmission wheels.
+    /// Currently cached and needs to be recalculated if wheels position changes relative to the rover.
     /// </summary>
     public float EffectiveXOffset { get; private set; }
     /// <summary>
     /// The radius of an abstract virtual wheel that represents all the transmission wheels.
+    /// Currently cached and needs to be recalculated if the radius of the wheels changes.
     /// </summary>
     public float EffectiveRadius { get; private set; }
 
