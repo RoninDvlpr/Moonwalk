@@ -27,7 +27,7 @@ public class VehicleControlUnit : IPhysicsStep, IDisposable
         this.receiver = receiver;
         this.driveAssemblies = driveAssemblies;
         this.roverConfig = roverConfig;
-        kinematicLimits = new KinematicLimits(roverConfig, mkmdfgmfdmgfd);
+        kinematicLimits = new KinematicLimits(roverConfig, CalculateMaxLinearVelocity, CalculateMaxAngularVelocity);
     }
 
     public void PerformPhysicsStep()
@@ -35,10 +35,32 @@ public class VehicleControlUnit : IPhysicsStep, IDisposable
         UpdateMovementCommand();
     }
 
+    float CalculateMaxLinearVelocity()
+    {
+        float maxLinearVelocity = float.PositiveInfinity;
+
+        foreach (DriveAssembly assembly in driveAssemblies)
+            if (assembly.MaxLinearVelocity < maxLinearVelocity)
+                maxLinearVelocity = assembly.MaxLinearVelocity;
+
+        return maxLinearVelocity;
+    }
+
+    float CalculateMaxAngularVelocity()
+    {
+        float maxAngularVelocity = float.PositiveInfinity;
+
+        foreach (DriveAssembly assembly in driveAssemblies)
+            if (assembly.MaxAngularVelocity < maxAngularVelocity)
+                maxAngularVelocity = assembly.MaxAngularVelocity;
+
+        return maxAngularVelocity;
+    }
+
     void UpdateMovementCommand()
     {
         Vector2 currentInput = receiver.GetCurrentInput();
-        MovementCommand movementCommand = kinematicPlanner.ComputeMovementCommand(currentInput);
+        MovementCommand movementCommand = kinematicPlanner.ComputeMovementCommand(currentInput, kinematicLimits.MaxLinearVelocity, kinematicLimits.MaxAngularVelocity);
         BroadcastMovementCommand(movementCommand);
 
         if (DebugModeEnabled)
@@ -48,7 +70,7 @@ public class VehicleControlUnit : IPhysicsStep, IDisposable
     void BroadcastMovementCommand(MovementCommand movementCommand)
     {
         if (driveAssemblies == null || driveAssemblies.Count == 0)
-            Debug.LogWarning("Drive assemblies isn't assigned!");
+            Debug.LogWarning("Can't broadcast movement command: Drive assemblies isn't assigned!");
         else
             foreach (DriveAssembly assembly in driveAssemblies)
                 assembly?.UpdateMovemenCommand(movementCommand);

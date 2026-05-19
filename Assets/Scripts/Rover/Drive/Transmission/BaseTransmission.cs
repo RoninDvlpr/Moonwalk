@@ -18,14 +18,19 @@ public abstract class BaseTransmission
     Transform roverCenterOfRotation;
     /// <summary>
     /// The X offset of an abstract virtual wheel that represents all the transmission wheels.
-    /// Currently cached and needs to be recalculated if wheels position changes relative to the rover.
+    /// Caching is currently implemented, so this value needs to be recalculated if wheels position changes relative to the rover.
     /// </summary>
     public float EffectiveXOffset { get; private set; }
     /// <summary>
     /// The radius of an abstract virtual wheel that represents all the transmission wheels.
-    /// Currently cached and needs to be recalculated if the radius of the wheels changes.
+    /// Caching is currently implemented, so this value needs to be recalculated if the radius of the wheels changes.
     /// </summary>
     public float EffectiveRadius { get; private set; }
+    /// <summary>
+    /// The circumference of an abstract virtual wheel that represents all the transmission wheels.
+    /// </summary>
+    public float EffectiveCircumference => 2f * Mathf.PI * EffectiveRadius;
+
 
 
     public BaseTransmission(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation)

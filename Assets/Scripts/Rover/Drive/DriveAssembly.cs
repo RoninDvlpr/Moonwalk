@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 
@@ -8,9 +9,18 @@ using UnityEngine;
 /// </summary>
 [Serializable] public class DriveAssembly : IPhysicsStep
 {
-    public string AssemblyName { get; private set; }
+    #region Config
     DriveAssemblyConfig AssemblyConfig { get; set; }
-    IReadOnlyCollection<WheelCollider> Wheels => AssemblyConfig.Wheels;
+    public string AssemblyName
+    {
+        get
+        {
+            if (AssemblyConfig == null)
+                Debug.LogError($"Can't get the assembly name: assembly config is null.");
+            return AssemblyConfig?.AssemblyName;
+        }
+    }
+    #endregion
 
     #region Modules
     MotorController motorController;
@@ -19,6 +29,22 @@ using UnityEngine;
 
     #region State
     MovementCommand movementCommandBuffer;
+    /// <summary>
+    /// Calculated based on the transmission's effective radius and motor's maximum RPM.
+    /// </summary>
+    public float MaxLinearVelocity => transmission.EffectiveCircumference * motorController.MaxRPM / 60f;
+    /// <summary>
+    /// If the drive assemly offest is 0 it means it's located in the rover rotation pivot and doesn't limit the rover angular velocity.
+    /// In such case the value of this property will be the positive infinity.
+    /// </summary>
+    public float MaxAngularVelocity
+    {
+        get
+        {
+            float maxVelocity = MaxLinearVelocity / Mathf.Abs(transmission.EffectiveXOffset);
+            return float.IsNaN(maxVelocity) ? float.PositiveInfinity : maxVelocity;
+        }
+    }
     #endregion
 
 
@@ -29,8 +55,8 @@ using UnityEngine;
     {
         if (assemblyConfig == null)
             Debug.LogError($"The drive assembly \"{assemblyConfig.AssemblyName}\" isn't properly initalized: the Assembly Config is null!");
-        else
-            CheckConfigValidity(assemblyConfig);
+        else if (!CheckConfigValidity(assemblyConfig))
+            assemblyConfig.Initialize();
         
         AssemblyConfig = assemblyConfig;
         InitializeModules(AssemblyConfig, roverCenterOfRotation);
@@ -38,10 +64,16 @@ using UnityEngine;
 
     void InitializeModules(DriveAssemblyConfig assemblyConfig, Transform roverCenterOfRotation)
     {
-        motorController = new MotorController(assemblyConfig.MotorConfig);
-        transmission = new LockedTransmission(Wheels, roverCenterOfRotation);
+        motorController = new MotorController(assemblyConfig?.MotorConfig);
+        transmission = new LockedTransmission(assemblyConfig?.Wheels, roverCenterOfRotation);
     }
 
+    /// <summary>
+    /// Check if config fields are present and ready for use.
+    /// Log warning if a fields is missing.
+    /// </summary>
+    /// <param name="configToValidate">The config to check</param>
+    /// <returns>'true' if config is valid, otherwise 'false'</returns>
     bool CheckConfigValidity(DriveAssemblyConfig configToValidate)
     {
         bool configIsValid = true;

@@ -27,8 +27,14 @@ using UnityEngine;
     }
 
 
-
-    public MotorConfig() { }
+    /// <summary>
+    /// Initializes the config using default float values (0f).
+    /// With a maximum RPM and torque of 0, the motor won't produce power, signaling that the motor hasn't been initialized properly.
+    /// </summary>
+    public MotorConfig()
+    {
+        Debug.LogWarning($"Initializing motor config with default values: max RPM of {MaxRPM} and max torque of {MaxTorque}. The motor may not behave as intended.");
+    }
 
     public MotorConfig(float maxMotorRPM, float maxMotorTorque)
     {

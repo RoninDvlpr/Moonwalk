@@ -35,10 +35,10 @@ using UnityEngine;
 
 
     /// <summary>
-    /// Initializes the assembly config using the provided motor config as overrides on top of the current motor config
+    /// Initializes the assembly config using the provided motor config as overwrites on top of the current motor config
     /// (if the assembly hasn't been initialized yet, the current motor config will be generated from the default motor config template).
     /// </summary>
-    /// <param name="motorConfigOverrides">A motor config used to override the default motor config template</param>
+    /// <param name="motorConfigOverrides">A motor config used to overwrite the default motor config template</param>
     public void Initialize(MotorConfig motorConfigOverrides)
     {
         Initialize();
@@ -56,11 +56,15 @@ using UnityEngine;
     {
         if (!HasMotorConfig)
             SetMotorConfigFromDefaultPreset();
+
+        if (!HasMotorConfig)
+            currentMotorConfig = new MotorConfig();
     }
 
     /// <summary>
-    /// Resets the current motor configuration instance to defaults while preserving it's current event invocation list (subscribtions).
-    /// If there's no motor config instance currently, a new instance is created based on the default configuration preset.
+    /// Resets the current motor configuration instance to defaults while preserving its current event invocation list (subscriptions).
+    /// If there's no motor config instance currently, a new instance is created
+    /// based on the default configuration preset if the default preset is present.
     /// Used both for initialization from defaults and for reset to defaults.
     /// </summary>
     public void SetMotorConfigFromDefaultPreset()
@@ -72,7 +76,7 @@ using UnityEngine;
             MotorConfig defaultConfig = motorDefaultConfig.GenerateMotorConfigInstance();
             if (currentMotorConfig?.CopyObjectFields(defaultConfig) == null)
                 currentMotorConfig = defaultConfig;
-        }
+        }        
     }
 
 

@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class MovementCommand
 {
-    public float TargetVelocity { get; private set; }
-    public float TargetAngularSpeed { get; private set; }
+    public float TargetLinearVelocity { get; private set; }
+    public float TargetAngularVelocity { get; private set; }
 
-    public MovementCommand(float targetVelocity, float targetAngularSpeed)
+    public MovementCommand(float targetLinearVelocity, float targetAngularVelocity)
     {
-        TargetVelocity = targetVelocity;
-        TargetAngularSpeed = targetAngularSpeed;
+        TargetLinearVelocity = targetLinearVelocity;
+        TargetAngularVelocity = targetAngularVelocity;
     }
 }

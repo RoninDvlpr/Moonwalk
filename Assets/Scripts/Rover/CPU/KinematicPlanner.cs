@@ -8,10 +8,10 @@ using UnityEngine;
 /// </summary>
 public class KinematicPlanner
 {
-    public MovementCommand ComputeMovementCommand(Vector2 input, float maxLinearSpeed, float maxAngularSpeed)
+    public MovementCommand ComputeMovementCommand(Vector2 input, float maxLinearVelocity, float maxAngularVelocity)
     {
         ClampInputVector(ref input);
-        return new MovementCommand(input.y * maxLinearSpeed, input.x * maxAngularSpeed);
+        return new MovementCommand(input.y * maxLinearVelocity, input.x * maxAngularVelocity);
     }
 
     /// <summary>

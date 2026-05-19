@@ -4,49 +4,49 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// The envelope that manages caching of derived rover parameters, such as maximum linear speed (derived from maximum RPM and wheel radius)
-/// and maximum angular speed (derived from wheels configuration and maximum linear speed).
+/// The envelope that manages caching of derived rover parameters, such as maximum linear velocity (derived from maximum RPM and wheel radius)
+/// and maximum angular velocity (derived from wheels configuration and maximum linear velocity).
 /// </summary>
 public class KinematicLimits : IDisposable
 {
     RoverConfig roverConfig;
-    Func<float> maxLinearSpeedCalculator, maxAngularSpeedCalculator;
-    float cachedMaxLinearSpeed;
+    Func<float> maxLinearVelocityCalculator, maxAngularVelocityCalculator;
+    float cachedMaxLinearVelocity;
     /// <summary>
-    /// The accessor implements lazy recalculation of the cached maximum speed,
+    /// The accessor implements lazy recalculation of the cached maximum velocity,
     /// which is performed when retrieving the underlying field value.
     /// </summary>
-    public float MaxLinearSpeed
+    public float MaxLinearVelocity
     {
         get
         {
             if (recalculationRequired)
                 RecalculateCachedValues();
-            return cachedMaxLinearSpeed;
+            return cachedMaxLinearVelocity;
         }
     }
-    float cachedMaxAngularSpeed;
+    float cachedMaxAngularVelocity;
     /// <summary>
-    /// The accessor implements lazy recalculation of the cached maximum speed,
+    /// The accessor implements lazy recalculation of the cached maximum velocity,
     /// which is performed when retrieving the underlying field value.
     /// </summary>
-    public float MaxAngularSpeed
+    public float MaxAngularVelocity
     {
         get
         {
             if (recalculationRequired)
                 RecalculateCachedValues();
-            return cachedMaxAngularSpeed;
+            return cachedMaxAngularVelocity;
         }
     }
     bool recalculationRequired = true;
 
 
-    public KinematicLimits(RoverConfig roverConfig, Func<float> maxLinearSpeedCalculator, Func<float> maxAngularSpeedCalculator)
+    public KinematicLimits(RoverConfig roverConfig, Func<float> maxLinearVelocityCalculator, Func<float> maxAngularVelocityCalculator)
     {
         this.roverConfig = roverConfig;
-        this.maxLinearSpeedCalculator = maxLinearSpeedCalculator;
-        this.maxAngularSpeedCalculator = maxAngularSpeedCalculator;
+        this.maxLinearVelocityCalculator = maxLinearVelocityCalculator;
+        this.maxAngularVelocityCalculator = maxAngularVelocityCalculator;
 
         roverConfig.SubscribeToMotorUpdates(MarkForRecalculation);
         // In case of implementation of wheels configuration changes during gameplay,
@@ -61,8 +61,8 @@ public class KinematicLimits : IDisposable
     /// </summary>
     void RecalculateCachedValues()
     {
-        cachedMaxLinearSpeed = maxLinearSpeedCalculator();
-        cachedMaxAngularSpeed = maxAngularSpeedCalculator();
+        cachedMaxLinearVelocity = maxLinearVelocityCalculator();
+        cachedMaxAngularVelocity = maxAngularVelocityCalculator();
         recalculationRequired = false;
     }
 
