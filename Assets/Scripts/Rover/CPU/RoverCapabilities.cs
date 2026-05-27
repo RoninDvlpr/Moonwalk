@@ -1,16 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 /// <summary>
-/// The envelope that manages caching of derived rover parameters, such as maximum linear velocity (derived from maximum RPM and wheel radius)
+/// Manages calculation and caching of derived rover parameters, such as maximum linear velocity (derived from maximum RPM and wheel radius)
 /// and maximum angular velocity (derived from wheels configuration and maximum linear velocity).
 /// </summary>
-public class KinematicLimits : IDisposable
+public class RoverCapabilities : IDisposable
 {
     RoverConfig roverConfig;
-    Func<float> maxLinearVelocityCalculator, maxAngularVelocityCalculator;
+    IReadOnlyCollection<DriveAssembly> driveAssemblies;
     float cachedMaxLinearVelocity;
     /// <summary>
     /// The accessor implements lazy recalculation of the cached maximum velocity,
@@ -42,11 +43,10 @@ public class KinematicLimits : IDisposable
     bool recalculationRequired = true;
 
 
-    public KinematicLimits(RoverConfig roverConfig, Func<float> maxLinearVelocityCalculator, Func<float> maxAngularVelocityCalculator)
+    public RoverCapabilities(RoverConfig roverConfig, IReadOnlyCollection<DriveAssembly> driveAssemblies)
     {
         this.roverConfig = roverConfig;
-        this.maxLinearVelocityCalculator = maxLinearVelocityCalculator;
-        this.maxAngularVelocityCalculator = maxAngularVelocityCalculator;
+        this.driveAssemblies = driveAssemblies;
 
         roverConfig.SubscribeToMotorUpdates(MarkForRecalculation);
         // In case of implementation of wheels configuration changes during gameplay,
@@ -61,9 +61,19 @@ public class KinematicLimits : IDisposable
     /// </summary>
     void RecalculateCachedValues()
     {
-        cachedMaxLinearVelocity = maxLinearVelocityCalculator();
-        cachedMaxAngularVelocity = maxAngularVelocityCalculator();
+        cachedMaxLinearVelocity = CalculateMaxLinearVelocity(driveAssemblies);
+        cachedMaxAngularVelocity = CalculateMaxAngularVelocity(driveAssemblies);
         recalculationRequired = false;
+    }
+
+    float CalculateMaxLinearVelocity(IReadOnlyCollection<DriveAssembly> driveAssemblies)
+    {
+        return driveAssemblies.Min(assembly => assembly.MaxLinearVelocity);
+    }
+
+    float CalculateMaxAngularVelocity(IReadOnlyCollection<DriveAssembly> driveAssemblies)
+    {
+        return driveAssemblies.Min(assembly => assembly.MaxAngularVelocity);
     }
 
     public void Dispose()

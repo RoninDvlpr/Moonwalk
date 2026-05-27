@@ -6,6 +6,12 @@ public class MotorController : IPhysicsStep
 {
     public MotorConfig MotorConfig { get; private set; }
     public float MaxRPM => MotorConfig?.MaxRPM ?? default (float);
+    float targetRPM;
+    public float TargetRPM
+    {
+        get => targetRPM;
+        set => targetRPM = Mathf.Clamp(value, 0f, MaxRPM);
+    }
 
 
     public MotorController(MotorConfig config)
@@ -17,6 +23,7 @@ public class MotorController : IPhysicsStep
 
     public void PerformPhysicsStep()
     {
-        // 
+        // Run PID loop to adjust torque
+        // Distribute torque to the transmission ? Probably, the drive assembly should do the destribution
     }
 }

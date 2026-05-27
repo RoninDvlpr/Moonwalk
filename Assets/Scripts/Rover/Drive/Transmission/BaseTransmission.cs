@@ -26,10 +26,6 @@ public abstract class BaseTransmission
     /// Caching is currently implemented, so this value needs to be recalculated if the radius of the wheels changes.
     /// </summary>
     public float EffectiveRadius { get; private set; }
-    /// <summary>
-    /// The circumference of an abstract virtual wheel that represents all the transmission wheels.
-    /// </summary>
-    public float EffectiveCircumference => 2f * Mathf.PI * EffectiveRadius;
 
 
 

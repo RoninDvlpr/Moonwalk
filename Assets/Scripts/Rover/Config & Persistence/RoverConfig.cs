@@ -13,6 +13,7 @@ using UnityEngine;
     [SerializeField] List<NamedSerializedData> serializedAssemblyConfigs;
 
 
+
     public RoverConfig(IReadOnlyCollection<DriveAssemblyConfig> driveAssemblyConfigs)
     {
         DriveAssemblyConfigs = driveAssemblyConfigs;
@@ -38,10 +39,13 @@ using UnityEngine;
     #region Serialization
 
     /// <summary>
-    /// Creates the auxiliary list for serialized assembly containers.
+    /// Creates the auxiliary list of serialized assembly containers.
     /// </summary>
     public void OnBeforeSerialize()
     {
+        if (DriveAssemblyConfigs.IsNullOrEmpty())
+            return;
+
         serializedAssemblyConfigs = new List<NamedSerializedData>();
         foreach (DriveAssemblyConfig config in DriveAssemblyConfigs)
         {
@@ -56,7 +60,7 @@ using UnityEngine;
     /// </summary>
     public void OnAfterDeserialize()
     {
-        if (serializedAssemblyConfigs == null || DriveAssemblyConfigs == null)
+        if (serializedAssemblyConfigs.IsNullOrEmpty() || DriveAssemblyConfigs.IsNullOrEmpty())
             return;
 
         foreach (NamedSerializedData data in serializedAssemblyConfigs)

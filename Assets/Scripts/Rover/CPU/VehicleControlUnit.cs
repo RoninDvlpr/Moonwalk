@@ -9,75 +9,63 @@ using UnityEngine;
 public class VehicleControlUnit : IPhysicsStep, IDisposable
 {
     #region Modules
-    KinematicPlanner kinematicPlanner = new KinematicPlanner();
-    KinematicLimits kinematicLimits;
+    RoverCapabilities roverCapabilities;
     ReceiverModule receiver;
-    List<DriveAssembly> driveAssemblies;
+    IReadOnlyCollection<DriveAssembly> driveAssemblies;
     #endregion
 
     #region State
-    RoverConfig roverConfig;
     public bool DebugModeEnabled { get; set; }
     #endregion
 
 
 
-    public VehicleControlUnit(ReceiverModule receiver, List<DriveAssembly> driveAssemblies, RoverConfig roverConfig)
+    public VehicleControlUnit(ReceiverModule receiver, IReadOnlyCollection<DriveAssembly> driveAssemblies, RoverConfig roverConfig)
     {
         this.receiver = receiver;
         this.driveAssemblies = driveAssemblies;
-        this.roverConfig = roverConfig;
-        kinematicLimits = new KinematicLimits(roverConfig, CalculateMaxLinearVelocity, CalculateMaxAngularVelocity);
+        roverCapabilities = new RoverCapabilities(roverConfig, driveAssemblies);
     }
 
     public void PerformPhysicsStep()
     {
-        UpdateMovementCommand();
+        UpdateMotionCommand();
     }
 
-    float CalculateMaxLinearVelocity()
-    {
-        float maxLinearVelocity = float.PositiveInfinity;
-
-        foreach (DriveAssembly assembly in driveAssemblies)
-            if (assembly.MaxLinearVelocity < maxLinearVelocity)
-                maxLinearVelocity = assembly.MaxLinearVelocity;
-
-        return maxLinearVelocity;
-    }
-
-    float CalculateMaxAngularVelocity()
-    {
-        float maxAngularVelocity = float.PositiveInfinity;
-
-        foreach (DriveAssembly assembly in driveAssemblies)
-            if (assembly.MaxAngularVelocity < maxAngularVelocity)
-                maxAngularVelocity = assembly.MaxAngularVelocity;
-
-        return maxAngularVelocity;
-    }
-
-    void UpdateMovementCommand()
+    void UpdateMotionCommand()
     {
         Vector2 currentInput = receiver.GetCurrentInput();
-        MovementCommand movementCommand = kinematicPlanner.ComputeMovementCommand(currentInput, kinematicLimits.MaxLinearVelocity, kinematicLimits.MaxAngularVelocity);
-        BroadcastMovementCommand(movementCommand);
+
+        MotionCommand command = KinematicSolver.ComputeMotionCommand(currentInput, roverCapabilities.MaxLinearVelocity, roverCapabilities.MaxAngularVelocity);
+        TransmitMotionCommand(command, driveAssemblies);
 
         if (DebugModeEnabled)
             Debug.Log(currentInput);
     }
 
-    void BroadcastMovementCommand(MovementCommand movementCommand)
+    void TransmitMotionCommand(MotionCommand motionCommand, IReadOnlyCollection<DriveAssembly> driveAssemblies)
     {
-        if (driveAssemblies == null || driveAssemblies.Count == 0)
-            Debug.LogWarning("Can't broadcast movement command: Drive assemblies isn't assigned!");
+        if (driveAssemblies.IsNullOrEmpty())
+            Debug.LogWarning("Can't broadcast movement command: Drive assemblies aren't assigned!");
         else
             foreach (DriveAssembly assembly in driveAssemblies)
-                assembly?.UpdateMovemenCommand(movementCommand);
+                PushAssemblyTargetVelocity(motionCommand, assembly);
+    }
+
+    void PushAssemblyTargetVelocity(MotionCommand motionCommand, DriveAssembly assembly)
+    {
+        if (assembly == null)
+        {
+            Debug.LogWarning("Can't update assembly target velocity: the given assembly is null.");
+            return;
+        }
+
+        float assemblyTargetVelocity = KinematicSolver.ComputeAssemblyTargetVelocity(motionCommand, assembly);
+        assembly.TargetVelocity = assemblyTargetVelocity;
     }
 
     public void Dispose()
     {
-        kinematicLimits?.Dispose();
+        roverCapabilities?.Dispose();
     }
 }

@@ -33,7 +33,8 @@ using UnityEngine;
     /// </summary>
     public MotorConfig()
     {
-        Debug.LogWarning($"Initializing motor config with default values: max RPM of {MaxRPM} and max torque of {MaxTorque}. The motor may not behave as intended.");
+        Debug.LogWarning($"Initializing motor config with default values: max RPM of {MaxRPM} and max torque of {MaxTorque}. " +
+            "If appropriate values aren’t set, the motor may not behave as intended.");
     }
 
     public MotorConfig(float maxMotorRPM, float maxMotorTorque)

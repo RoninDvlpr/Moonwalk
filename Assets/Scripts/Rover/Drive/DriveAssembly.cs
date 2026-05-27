@@ -28,11 +28,11 @@ using UnityEngine;
     #endregion
 
     #region State
-    MovementCommand movementCommandBuffer;
+    public float TargetVelocity { get; set; }
     /// <summary>
     /// Calculated based on the transmission's effective radius and motor's maximum RPM.
     /// </summary>
-    public float MaxLinearVelocity => transmission.EffectiveCircumference * motorController.MaxRPM / 60f;
+    public float MaxLinearVelocity => KinematicSolver.ConvertRPMToLinearVelocity(motorController.MaxRPM, transmission.EffectiveRadius);
     /// <summary>
     /// If the drive assemly offest is 0 it means it's located in the rover rotation pivot and doesn't limit the rover angular velocity.
     /// In such case the value of this property will be the positive infinity.
@@ -45,6 +45,10 @@ using UnityEngine;
             return float.IsNaN(maxVelocity) ? float.PositiveInfinity : maxVelocity;
         }
     }
+    /// <summary>
+    /// The abstract X offset of the assembly relative to the rover rotation pivot.
+    /// </summary>
+    public float EffectiveXOffset => transmission.EffectiveXOffset;
     #endregion
 
 
@@ -96,15 +100,10 @@ using UnityEngine;
     #endregion
 
 
-    public void UpdateMovemenCommand(MovementCommand roverMovementCommand)
-    {
-        movementCommandBuffer = roverMovementCommand;
-    }
-
     public void PerformPhysicsStep()
     {
-        // Calculate target assembly velocity
-        // Calculate target motor RPM
-        // Push target RPM to the motor
+        motorController.TargetRPM = KinematicSolver.ConvertLinearVelocityToRPM(TargetVelocity, transmission.EffectiveRadius);
+        motorController.PerformPhysicsStep();
+        //motor torque also should be applied to transmission
     }
 }
