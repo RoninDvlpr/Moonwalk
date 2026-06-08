@@ -25,6 +25,8 @@ using UnityEngine;
             NotifyAboutChanges();
         }
     }
+    [SerializeField] PidConfig pidConfig;
+    public PidConfig PidConfig => pidConfig;
 
 
     /// <summary>
@@ -37,9 +39,10 @@ using UnityEngine;
             "If appropriate values aren’t set, the motor may not behave as intended.");
     }
 
-    public MotorConfig(float maxMotorRPM, float maxMotorTorque)
+    public MotorConfig(float maxMotorRPM, float maxMotorTorque, PidConfig pidControllerConfig)
     {
         maxRPM = maxMotorRPM;
         maxTorque = maxMotorTorque;
+        pidConfig = pidControllerConfig;
     }
 }

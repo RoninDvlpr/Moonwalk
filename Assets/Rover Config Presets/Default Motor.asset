@@ -12,6 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 51e6fd947f886814681ae9b75a6b7106, type: 3}
   m_Name: Default Motor
   m_EditorClassIdentifier: 
-  motorSpecs:
-    MaxRPM: 100
-    MaxTorque: 80
+  motorConfig:
+    maxRPM: 100
+    maxTorque: 60
+    pidConfig:
+      Kp: 0.8
+      Ki: 1.5
+      Kd: 0.02

@@ -13,6 +13,7 @@ public class MotorConfigPreset : ScriptableObject
 
     public MotorConfig GenerateMotorConfigInstance()
     {
-        return new MotorConfig(motorConfig.MaxRPM, motorConfig.MaxTorque);
+        PidConfig newPidConfig = new PidConfig(motorConfig.PidConfig);
+        return new MotorConfig(motorConfig.MaxRPM, motorConfig.MaxTorque, newPidConfig);
     }
 }
