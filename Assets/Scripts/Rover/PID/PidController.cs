@@ -9,7 +9,34 @@ using UnityEngine;
 /// </summary>
 public class PidController
 {
-    readonly PidConfig config;
+    PidConfig config;
+    public float Kp
+    {
+        get
+        {
+            if (config == null)
+                LogDefaultCoefficientWarning("Kp", default(float));
+            return config?.Kp ?? default(float);
+        }
+    }
+    public float Ki
+    {
+        get
+        {
+            if (config == null)
+                LogDefaultCoefficientWarning("Ki", default(float));
+            return config?.Ki ?? default(float);
+        }
+    }
+    public float Kd
+    {
+        get
+        {
+            if (config == null)
+                LogDefaultCoefficientWarning("Kd", default(float));
+            return config?.Kd ?? default(float);
+        }
+    }
 
     float integral;
     float derivative;
@@ -19,6 +46,8 @@ public class PidController
 
     public PidController(PidConfig config)
     {
+        if (config == null)
+            Debug.LogError("The the provided PID config is null!");
         this.config = config;
     }
 
@@ -29,22 +58,22 @@ public class PidController
     /// <param name="current">The current measured value (process variable).</param>
     /// <param name="outputMin">The lower constraint for the output value.</param>
     /// <param name="outputMax">The upper constraint for the output value.</param>
-    /// <param name="fixedDeltaTime">The time elapsed since the previous loop iteration.</param>
+    /// <param name="deltaTime">The time elapsed since the previous loop iteration.</param>
     /// <returns>The calculated effort required to reach the target, clamped between the minimum and maximum constraints.</returns>
-    public float CalculateOutput(float target, float current, float outputMin, float outputMax, float fixedDeltaTime)
+    public float CalculateOutput(float target, float current, float outputMin, float outputMax, float deltaTime)
     {
         float error = target - current;
-        float proportional = config.Kp * error;
+        float proportional = Kp * error;
 
         // integral and derivative terms are only updated if the time elapsed since the previous loop iteration is non-zero
-        if (fixedDeltaTime > 0f)
+        if (deltaTime > 0f)
         {
-            integral += config.Ki * error * fixedDeltaTime;
+            integral += Ki * error * deltaTime;
             integral = Mathf.Clamp(integral, outputMin, outputMax);
 
             // calculating the derivative on the first iteration, while there's no previous error yet, will result in a derivative kick / spike
             if (!isFirstIteration)
-                derivative = config.Kd * (error - previousError) / fixedDeltaTime;
+                derivative = Kd * (error - previousError) / deltaTime;
             else
                 isFirstIteration = false;
         }
@@ -62,5 +91,10 @@ public class PidController
     {
         integral = derivative = previousError = 0f;
         isFirstIteration = true;
+    }
+
+    void LogDefaultCoefficientWarning(string coefficientName, float coefficientDefaultValue)
+    {
+        Debug.LogWarning($"The PID config is null, returning the default value of {coefficientDefaultValue} for the {coefficientName} coefficient.");
     }
 }

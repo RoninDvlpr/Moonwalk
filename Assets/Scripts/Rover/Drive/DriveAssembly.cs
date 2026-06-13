@@ -68,8 +68,8 @@ using UnityEngine;
 
     void InitializeModules(DriveAssemblyConfig assemblyConfig, Transform roverCenterOfRotation)
     {
-        motorController = new MotorController(assemblyConfig?.MotorConfig);
         transmission = new LockedTransmission(assemblyConfig?.Wheels, roverCenterOfRotation);
+        motorController = new MotorController(assemblyConfig?.MotorConfig, transmission);
     }
 
     /// <summary>
@@ -100,10 +100,9 @@ using UnityEngine;
     #endregion
 
 
-    public void PerformPhysicsStep()
+    public void PerformPhysicsStep(float deltaTime)
     {
         motorController.TargetRPM = KinematicSolver.ConvertLinearVelocityToRPM(TargetVelocity, transmission.EffectiveRadius);
-        motorController.PerformPhysicsStep();
-        //motor torque also should be applied to transmission
+        motorController.PerformPhysicsStep(deltaTime);
     }
 }

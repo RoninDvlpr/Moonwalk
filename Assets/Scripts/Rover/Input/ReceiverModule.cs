@@ -12,7 +12,7 @@ public class ReceiverModule : IPhysicsStep
         this.signalSource = signalSource;
     }
 
-    public void PerformPhysicsStep()
+    public void PerformPhysicsStep(float deltaTime)
     {
         /// If necessary, a lower receiver sampling rate can be simulated by skipping a number of frames
         SampleSignal();

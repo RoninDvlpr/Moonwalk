@@ -27,7 +27,7 @@ public class VehicleControlUnit : IPhysicsStep, IDisposable
         roverCapabilities = new RoverCapabilities(roverConfig, driveAssemblies);
     }
 
-    public void PerformPhysicsStep()
+    public void PerformPhysicsStep(float deltaTime)
     {
         UpdateMotionCommand();
     }

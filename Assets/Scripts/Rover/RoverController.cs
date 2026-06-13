@@ -65,10 +65,10 @@ public class RoverController : MonoBehaviour
     {
         VCU.DebugModeEnabled = enableDebugMode;
 
-        receiverModule.PerformPhysicsStep();
-        VCU.PerformPhysicsStep();
+        receiverModule.PerformPhysicsStep(Time.fixedDeltaTime);
+        VCU.PerformPhysicsStep(Time.fixedDeltaTime);
         foreach (DriveAssembly assembly in driveAssemblies)
-            assembly.PerformPhysicsStep();
+            assembly.PerformPhysicsStep(Time.fixedDeltaTime);
     }
 
     void OnDestroy()

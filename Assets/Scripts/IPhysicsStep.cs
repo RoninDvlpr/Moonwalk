@@ -8,5 +8,5 @@ public interface IPhysicsStep
     /// Notify this object about the next physics step.
     /// Intended to be called in FixedUpdate().
     /// </summary>
-    public void PerformPhysicsStep();
+    public void PerformPhysicsStep(float deltaTime);
 }

@@ -11,37 +11,59 @@ public class LockedTransmission : BaseTransmission
     public LockedTransmission(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation) : base(wheels, roverCenterOfRotation) { }
 
     /// <summary>
-    /// If the provided rover center of rotation is null, the method considers the center of rotation to be at Vector3.zero.
+    /// Calculates the mechanical shaft RPM by only accounting the wheels that touch the ground (aren't airborne).
     /// </summary>
-    /// <param name="wheels">The transmission's wheels</param>
-    /// <param name="roverCenterOfRotation">The pivot that the rover rotates around when turning</param>
-    /// <returns>Effective X offset value for use in kinematics calculation</returns>
-    protected override float CalculateEffectiveOffset(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation)
+    /// <returns>The average RPM of the wheels with ground traction</returns>
+    public override float GetCurrentRpm()
     {
-        Vector3 pointOfRotation = roverCenterOfRotation?.position ?? Vector3.zero;
-        float xOffsetSum = 0f;
-        foreach (WheelCollider wheel in wheels)
+        if (wheels.IsNullOrEmpty())
         {
-            Vector3 worldPositionDelta = wheel.transform.position - pointOfRotation;
-            float deltaProjectedOnXAxis = Vector3.Dot(worldPositionDelta, wheel.transform.right);
-            xOffsetSum += deltaProjectedOnXAxis;
+            Debug.LogWarning($"The wheels collection {wheels} is null or empty, returning current RPM of 0.");
+            return 0f;
         }
-            
-        return xOffsetSum/wheels.Count;
+
+        List<WheelCollider> groundedWheels = GetGroundedWheels();
+
+        if (groundedWheels.Count > 0)
+            return CalculateAverageRpm(groundedWheels);
+        else
+            return CalculateAverageRpm(wheels);
     }
 
-    protected override float CalculateEffectiveRadius(IReadOnlyCollection<WheelCollider> wheels)
-    {
-        float radiusSum = 0f;
-        foreach (WheelCollider wheel in wheels)
-            radiusSum += wheel.radius;
-        return radiusSum / wheels.Count;
-    }
-
+    /// <summary>
+    /// Dynamically routes 100% of the motor's torque away from airborne wheels and onto grounded ones.
+    /// </summary>
+    /// <param name="torque">The torque to distribute</param>
     public override void DistributeTorque(float torque)
     {
-        float torquePerWheel = torque / wheels.Count;
+        if (wheels.IsNullOrEmpty())
+        {
+            Debug.LogWarning($"The torque hasn't been applied: the wheels collection {wheels} is null or empty.");
+            return;
+        }
+
+        // set the torque of all wheels to 0 to prevent applying force to airborne wheels
         foreach (WheelCollider wheel in wheels)
-            wheel.motorTorque = torquePerWheel;
+            wheel.motorTorque = 0f;
+
+        List<WheelCollider> groundedWheels = GetGroundedWheels();
+
+        if (groundedWheels.Count > 0)
+            DistributeTorqueEqually(torque, groundedWheels);
+        else
+            DistributeTorqueEqually(torque, wheels);
+    }
+
+    /// <summary>
+    /// Returns the list of wheels that have traction.
+    /// </summary>
+    /// <returns>The list of found wheels standing on a collider</returns>
+    List<WheelCollider> GetGroundedWheels()
+    {
+        List<WheelCollider> groundedWheels = new List<WheelCollider>();
+        foreach (WheelCollider wheel in wheels)
+            if (wheel.GetGroundHit(out WheelHit hit))
+                groundedWheels.Add(wheel);
+        return groundedWheels;
     }
 }
