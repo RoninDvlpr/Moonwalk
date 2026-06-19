@@ -10,7 +10,7 @@ using UnityEngine;
     /// Will be ignored by the JsonUtility serializer (it ignores properties).
     /// </summary>
     public IReadOnlyCollection<DriveAssemblyConfig> DriveAssemblyConfigs { get; private set; }
-    [SerializeField] List<NamedSerializedData> serializedAssemblyConfigs;
+    [SerializeField] List<NamedSerializedData> serializedMotorConfigs;
 
 
 
@@ -39,34 +39,34 @@ using UnityEngine;
     #region Serialization
 
     /// <summary>
-    /// Creates the auxiliary list of serialized assembly containers.
+    /// Creates the auxiliary list of serialized motor containers.
     /// </summary>
     public void OnBeforeSerialize()
     {
         if (DriveAssemblyConfigs.IsNullOrEmpty())
             return;
 
-        serializedAssemblyConfigs = new List<NamedSerializedData>();
+        serializedMotorConfigs = new List<NamedSerializedData>();
         foreach (DriveAssemblyConfig config in DriveAssemblyConfigs)
         {
-            NamedSerializedData serializedConfig = new NamedSerializedData(config.AssemblyName, config);
-            serializedAssemblyConfigs.Add(serializedConfig);
+            NamedSerializedData serializedConfig = new NamedSerializedData(config.AssemblyName, config.MotorConfig);
+            serializedMotorConfigs.Add(serializedConfig);
         }
     }
 
     /// <summary>
-    /// Appies serialized data to corresponding assembly configs with matching names.
-    /// Note: For successful loading of assembly configs, the config list should be provided prior to deserialization.
+    /// Appies serialized data to corresponding motor configs with matching drive assembly names.
+    /// Note: For successful loading of motor configs, the assembly configs list should be provided prior to deserialization.
     /// </summary>
     public void OnAfterDeserialize()
     {
-        if (serializedAssemblyConfigs.IsNullOrEmpty() || DriveAssemblyConfigs.IsNullOrEmpty())
+        if (serializedMotorConfigs.IsNullOrEmpty() || DriveAssemblyConfigs.IsNullOrEmpty())
             return;
 
-        foreach (NamedSerializedData data in serializedAssemblyConfigs)
+        foreach (NamedSerializedData data in serializedMotorConfigs)
             foreach (DriveAssemblyConfig config in DriveAssemblyConfigs)
                 if (config.AssemblyName == data.Name)
-                    data.ApplyAsOverwriteTo(config);
+                    data.ApplyAsOverwriteTo(config.MotorConfig);
     }
 
     #endregion

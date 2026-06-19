@@ -7,9 +7,9 @@ using UnityEngine;
 /// </summary>
 [Serializable] public class NamedSerializedData
 {
-    string name;
+    [SerializeField] string name;
     public string Name => name;
-    string jsonData;
+    [SerializeField] string jsonData;
     public string JsonData => jsonData;
 
 

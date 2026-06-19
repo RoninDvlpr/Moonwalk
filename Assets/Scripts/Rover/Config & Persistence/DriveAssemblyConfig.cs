@@ -6,6 +6,9 @@ using UnityEngine;
 /// <summary>
 /// A set of drive assembly parameters and dependenices.
 /// This class is supposed to be exposed in the inspector of the Rover Controller.
+/// <br/> WARNING: Do not serialize this class to external save files (e.g., JSON, PlayerPrefs), 
+/// as live scene and asset references will break upon deserialization.
+/// For cross-session config saving, use a dedicated pure-data subcontainer (e.g., DriveAssemblyActiveSpecs) instead.
 /// </summary>
 [Serializable] public class DriveAssemblyConfig
 {
@@ -17,7 +20,12 @@ using UnityEngine;
     public IReadOnlyCollection<WheelCollider> Wheels => wheels.AsReadOnly();
 
     [SerializeField] MotorConfigPreset motorDefaultConfig;
-    MotorConfig currentMotorConfig;
+    /// <summary>
+    /// Represents the effective motor config currently used by the drive assembly.
+    /// NOTE: If there will be more than one active config (e.g., transmission, motor, shaft, etc.), they can be encapsulated
+    /// in a container (for example, DriveAssemblyActiveSpecs) for easier serialization.
+    /// </summary>
+    MotorConfig activeMotorConfig;
     /// <summary>
     /// The public Motor Config accessor performs lazy initialization.
     /// </summary>
@@ -27,10 +35,10 @@ using UnityEngine;
         {
             if (!HasMotorConfig)
                 Initialize();
-            return currentMotorConfig;
+            return activeMotorConfig;
         }
     }
-    bool HasMotorConfig => currentMotorConfig != null;
+    bool HasMotorConfig => activeMotorConfig != null;
 
 
 
@@ -43,7 +51,7 @@ using UnityEngine;
     {
         Initialize();
         if (motorConfigOverrides != null)
-            currentMotorConfig.CopyObjectFields(motorConfigOverrides);
+            activeMotorConfig.CopyObjectFields(motorConfigOverrides);
     }
 
     /// <summary>
@@ -58,7 +66,7 @@ using UnityEngine;
             SetMotorConfigFromDefaultPreset();
 
         if (!HasMotorConfig)
-            currentMotorConfig = new MotorConfig();
+            activeMotorConfig = new MotorConfig();
     }
 
     /// <summary>
@@ -74,8 +82,8 @@ using UnityEngine;
         else
         {
             MotorConfig defaultConfig = motorDefaultConfig.GenerateMotorConfigInstance();
-            if (currentMotorConfig?.CopyObjectFields(defaultConfig) == null)
-                currentMotorConfig = defaultConfig;
+            if (activeMotorConfig?.CopyObjectFields(defaultConfig) == null)
+                activeMotorConfig = defaultConfig;
         }        
     }
 
