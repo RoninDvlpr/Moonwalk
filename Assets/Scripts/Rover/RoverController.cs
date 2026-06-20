@@ -18,7 +18,7 @@ public class RoverController : MonoBehaviour
     #region Modules
     ReceiverModule receiverModule;
     VehicleControlUnit VCU;
-    [SerializeField] List<DriveAssembly> driveAssemblies;
+    List<DriveAssembly> driveAssemblies;
     #endregion
 
 
@@ -47,6 +47,9 @@ public class RoverController : MonoBehaviour
         ISignalSource signalSource = new InputSystemSignalSource();
         receiverModule = new ReceiverModule(signalSource);
 
+        if (driveAssemblies != null)
+            Debug.LogWarning("The drive assemblies list already exists during modules initialization; rewriting the list.");
+        driveAssemblies = new List<DriveAssembly>();
         foreach (DriveAssemblyConfig assemblyConfig in config.DriveAssemblyConfigs)
             driveAssemblies.Add(new DriveAssembly(assemblyConfig, roverCenterOfRotation));
 

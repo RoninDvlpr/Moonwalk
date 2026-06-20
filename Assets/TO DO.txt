@@ -1,2 +1,3 @@
 - Implement DriveAssembly name incrementation for matching names (instead of simply adding (1) to the name)
 - Implement per-FixedUpdate caching of the grounded wheels list for the LockedTransmission to decrease number of raycasts per frame
+- Implement motor max torque drop with the RPM increase for a more precise simulation
