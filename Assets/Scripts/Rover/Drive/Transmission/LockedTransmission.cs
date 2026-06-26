@@ -14,7 +14,7 @@ public class LockedTransmission : BaseTransmission
     /// Calculates the mechanical shaft RPM by only accounting the wheels that touch the ground (aren't airborne).
     /// </summary>
     /// <returns>The average RPM of the wheels with ground traction</returns>
-    public override float GetCurrentRpm()
+    public override float GetCurrentRPM()
     {
         if (wheels.IsNullOrEmpty())
         {
@@ -25,9 +25,9 @@ public class LockedTransmission : BaseTransmission
         List<WheelCollider> groundedWheels = GetGroundedWheels();
 
         if (groundedWheels.Count > 0)
-            return CalculateAverageRpm(groundedWheels);
+            return CalculateAverageRPM(groundedWheels);
         else
-            return CalculateAverageRpm(wheels);
+            return CalculateAverageRPM(wheels);
     }
 
     /// <summary>

@@ -21,6 +21,8 @@ public class RoverController : MonoBehaviour
     List<DriveAssembly> driveAssemblies;
     #endregion
 
+    public event Action<RoverTelemetryContainer> TelemetryUpdated;
+
 
 
     #region Initialization
@@ -72,6 +74,17 @@ public class RoverController : MonoBehaviour
         VCU.PerformPhysicsStep(Time.fixedDeltaTime);
         foreach (DriveAssembly assembly in driveAssemblies)
             assembly.PerformPhysicsStep(Time.fixedDeltaTime);
+
+        TelemetryUpdated?.Invoke(GatherRoverTelemetry());
+    }
+
+    RoverTelemetryContainer GatherRoverTelemetry()
+    {
+        List<DriveAssemblyTelemetryContainer> assemblyTelemetries = new List<DriveAssemblyTelemetryContainer>();
+        foreach (DriveAssembly assembly in driveAssemblies)
+            assemblyTelemetries.Add(assembly.GetTelemetry());
+
+        return new RoverTelemetryContainer(assemblyTelemetries);
     }
 
     void OnDestroy()

@@ -128,9 +128,9 @@ public abstract class BaseTransmission : IMotorLoad
 
     #region RPM Getters
 
-    public abstract float GetCurrentRpm();
+    public abstract float GetCurrentRPM();
 
-    public float CalculateAverageRpm(IReadOnlyCollection<WheelCollider> wheelsCollection)
+    public float CalculateAverageRPM(IReadOnlyCollection<WheelCollider> wheelsCollection)
     {
         if (wheelsCollection.IsNullOrEmpty())
         {

@@ -3,6 +3,6 @@
 /// </summary>
 public interface IMotorLoad
 {
-    float GetCurrentRpm();
+    float GetCurrentRPM();
     void ApplyTorque(float torque);
 }

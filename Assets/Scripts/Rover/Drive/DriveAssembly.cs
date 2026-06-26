@@ -104,4 +104,9 @@ using UnityEngine;
         motorController.TargetRPM = KinematicSolver.ConvertLinearVelocityToRPM(TargetVelocity, transmission.EffectiveRadius);
         motorController.PerformPhysicsStep(deltaTime);
     }
+
+    public DriveAssemblyTelemetryContainer GetTelemetry()
+    {
+        return new DriveAssemblyTelemetryContainer(AssemblyName, motorController.TargetRPM, motorController.CurrentRPM, motorController.CurrentTorque);
+    }
 }

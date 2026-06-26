@@ -10,7 +10,7 @@ public class OpenTransmission : BaseTransmission
 {
     public OpenTransmission(IReadOnlyCollection<WheelCollider> wheels, Transform roverCenterOfRotation) : base(wheels, roverCenterOfRotation) { }
 
-    public override float GetCurrentRpm() => CalculateAverageRpm(wheels);
+    public override float GetCurrentRPM() => CalculateAverageRPM(wheels);
 
     /// <summary>
     /// Torque is split equally among all connected wheels, regardless of traction.

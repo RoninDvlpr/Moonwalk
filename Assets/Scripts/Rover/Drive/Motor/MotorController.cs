@@ -22,6 +22,7 @@ public class MotorController : IPhysicsStep
         get => targetRPM;
         set => targetRPM = Mathf.Clamp(value, 0f, MaxRPM);
     }
+    public float CurrentRPM => motorLoad.GetCurrentRPM();
     float currentTorque;
     public float CurrentTorque
     {
@@ -52,8 +53,7 @@ public class MotorController : IPhysicsStep
         }
 
         // Run PID loop to adjust torque
-        float currentRPM = motorLoad.GetCurrentRpm();
-        CurrentTorque = pidController.CalculateOutput(targetRPM, currentRPM, -MaxTorque, MaxTorque, deltaTime);
+        CurrentTorque = pidController.CalculateOutput(targetRPM, CurrentRPM, -MaxTorque, MaxTorque, deltaTime);
 
         // Apply torque to the transmission
         motorLoad.ApplyTorque(CurrentTorque);
