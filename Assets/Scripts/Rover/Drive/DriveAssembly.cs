@@ -107,6 +107,6 @@ using UnityEngine;
 
     public DriveAssemblyTelemetryContainer GetTelemetry()
     {
-        return new DriveAssemblyTelemetryContainer(AssemblyName, motorController.TargetRPM, motorController.CurrentRPM, motorController.CurrentTorque);
+        return new DriveAssemblyTelemetryContainer(AssemblyName, TargetVelocity, motorController.TargetRPM, motorController.CurrentRPM, motorController.CurrentTorque);
     }
 }

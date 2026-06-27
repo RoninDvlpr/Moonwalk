@@ -210,7 +210,7 @@ RectTransform:
   - {fileID: 601247017}
   m_Father: {fileID: 286830677}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.7, y: 0.7}
+  m_AnchorMin: {x: 0.7, y: 0.75}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
@@ -640,8 +640,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 0.8}
-  m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 5, y: 0}
+  m_SizeDelta: {x: -10, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &601247018
 MonoBehaviour:
@@ -659,7 +659,7 @@ MonoBehaviour:
     m_Left: 0
     m_Right: 0
     m_Top: 0
-    m_Bottom: 0
+    m_Bottom: 5
   m_ChildAlignment: 4
   m_Spacing: 0
   m_ChildForceExpandWidth: 1
@@ -1915,9 +1915,49 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 223617120}
     m_Modifications:
+    - target: {fileID: 1030891182020390785, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1030891182020390785, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1676975757377551401, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 1676975757377551401, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 3470020585560795012, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_Name
       value: Headers
+      objectReference: {fileID: 0}
+    - target: {fileID: 6764606783259707254, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6764606783259707254, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6791846542113755965, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 6791846542113755965, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7058646454846839141, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7058646454846839141, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 9020763654405540855, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_Pivot.x
@@ -1945,7 +1985,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9020763654405540855, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 9020763654405540855, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_SizeDelta.y
@@ -1981,7 +2021,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9020763654405540855, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 9020763654405540855, guid: 422f5338bafdd1747abc0466ec34cf2b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2079,6 +2119,6 @@ SceneRoots:
   - {fileID: 705507995}
   - {fileID: 251165525}
   - {fileID: 1676515231873399590}
+  - {fileID: 1364251870}
   - {fileID: 286830677}
   - {fileID: 1711456204}
-  - {fileID: 1364251870}
